@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sales Performance Dashboard — 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:       #0a0c10;
+    --surface:  #111318;
+    --border:   #1e2128;
+    --gold:     #e8a937;
+    --gold-dim: #a87320;
+    --teal:     #2dd4bf;
+    --rose:     #f43f5e;
+    --violet:   #818cf8;
+    --text:     #e4e8f0;
+    --muted:    #6b7280;
+    --radius:   12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #111318 0%, transparent 100%);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 14px; }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--gold), #c47b10);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  header h1 span { color: var(--gold); }
+  .header-meta { text-align: right; }
+  .header-meta p { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+  .live-dot {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--teal);
+  }
+  .live-dot::before {
+    content: ''; width: 7px; height: 7px; background: var(--teal);
+    border-radius: 50%; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ── Layout ── */
+  main { padding: 36px 40px; }
+
+  /* ── KPI strip ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  @media(max-width:1200px){ .kpi-grid{ grid-template-columns: repeat(3,1fr); } }
+  @media(max-width:700px){  .kpi-grid{ grid-template-columns: repeat(2,1fr); } }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .kpi:hover { border-color: var(--gold-dim); }
+  .kpi::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent, var(--gold));
+  }
+  .kpi-label {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .kpi-value {
+    font-size: 2rem; font-weight: 800; line-height: 1;
+    color: var(--accent, var(--gold));
+  }
+  .kpi-sub { font-size: 0.72rem; color: var(--muted); margin-top: 6px; font-family: 'DM Mono', monospace; }
+
+  /* ── Section grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-12 { display: grid; grid-template-columns: 7fr 5fr; gap: 20px; margin-bottom: 20px; }
+  .grid-21 { display: grid; grid-template-columns: 5fr 7fr; gap: 20px; margin-bottom: 20px; }
+  @media(max-width:1100px){ .grid-2,.grid-3,.grid-12,.grid-21{ grid-template-columns:1fr; } }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    overflow: hidden;
+  }
+  .card-title {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before {
+    content: ''; width: 3px; height: 14px;
+    background: var(--accent, var(--gold)); border-radius: 2px;
+  }
+  .chart-wrap { position: relative; }
+
+  /* ── Stage pills ── */
+  .stage-list { display: flex; flex-direction: column; gap: 9px; }
+  .stage-row {
+    display: flex; align-items: center; gap: 10px; font-size: 0.8rem;
+  }
+  .stage-name { flex: 1; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stage-bar-wrap { flex: 2; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .stage-bar { height: 100%; border-radius: 3px; transition: width .8s ease; }
+  .stage-num { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); min-width: 36px; text-align: right; }
+
+  /* ── Agent table ── */
+  .agent-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .agent-table th {
+    text-align: left; padding: 6px 10px;
+    color: var(--muted); font-weight: 600; font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: .06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .agent-table td { padding: 8px 10px; border-bottom: 1px solid #1a1d24; }
+  .agent-table tr:last-child td { border-bottom: none; }
+  .agent-table tr:hover td { background: #161920; }
+  .rank { font-family: 'DM Mono', monospace; color: var(--muted); font-size: 0.72rem; }
+  .rank-1 { color: var(--gold); }
+  .rank-2 { color: #94a3b8; }
+  .rank-3 { color: #cd7f32; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    background: #1e2128; color: var(--teal);
+  }
+
+  /* ── Divider label ── */
+  .section-label {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: .15em;
+    color: var(--muted); margin: 36px 0 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  footer {
+    text-align: center; margin-top: 48px;
+    font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo-icon">◈</div>
+    <div>
+      <h1>Sales <span>Performance</span> Dashboard</h1>
+      <p style="font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;">CRM Pipeline Intelligence · Jan – Feb 2026</p>
+    </div>
+  </div>
+  <div class="header-meta">
+    <p class="live-dot">Data Updated</p>
+    <p style="margin-top:4px;">4,761 Records · 40 Fields</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- KPI Strip -->
+  <div class="kpi-grid">
+    <div class="kpi" style="--accent:var(--gold)">
+      <div class="kpi-label">Total Inquiries</div>
+      <div class="kpi-value">4,761</div>
+      <div class="kpi-sub">Jan 1 – Feb 12</div>
+    </div>
+    <div class="kpi" style="--accent:var(--teal)">
+      <div class="kpi-label">Closed Sales</div>
+      <div class="kpi-value">95</div>
+      <div class="kpi-sub">2.0% close rate</div>
+    </div>
+    <div class="kpi" style="--accent:var(--violet)">
+      <div class="kpi-label">In Pipeline</div>
+      <div class="kpi-value">2,041</div>
+      <div class="kpi-sub">Status: Ops</div>
+    </div>
+    <div class="kpi" style="--accent:#38bdf8">
+      <div class="kpi-label">Active Leads</div>
+      <div class="kpi-value">2,720</div>
+      <div class="kpi-sub">Status: Lead</div>
+    </div>
+    <div class="kpi" style="--accent:var(--rose)">
+      <div class="kpi-label">Lost / Disqualified</div>
+      <div class="kpi-value">2,635</div>
+      <div class="kpi-sub">Lost + Disq combined</div>
+    </div>
+    <div class="kpi" style="--accent:#a3e635">
+      <div class="kpi-label">Top Source</div>
+      <div class="kpi-value" style="font-size:1.1rem;padding-top:6px">Meta/FB</div>
+      <div class="kpi-sub">2,984 leads · 62.7%</div>
+    </div>
+  </div>
+
+  <!-- Daily trend + Lead Sources -->
+  <div class="section-label">Acquisition &amp; Channels</div>
+  <div class="grid-12">
+    <div class="card">
+      <div class="card-title" style="--accent:var(--gold)">Daily Inquiry Volume</div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="dailyChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="--accent:var(--teal)">Lead Source Breakdown</div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="sourceChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline + Lost Reasons -->
+  <div class="section-label">Pipeline &amp; Qualification</div>
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-title" style="--accent:var(--violet)">Pipeline Stage Distribution</div>
+      <div class="stage-list" id="stageList"></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="--accent:var(--rose)">Lost &amp; Disqualification Reasons</div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="lostChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Countries + Contact Methods + Shift -->
+  <div class="section-label">Geography &amp; Operations</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title" style="--accent:#38bdf8">Top Countries</div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="countryChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="--accent:var(--gold)">Contact Methods</div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="methodChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="--accent:#a3e635">Shift Distribution</div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="shiftChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent leaderboard -->
+  <div class="section-label">Agent Performance</div>
+  <div class="card">
+    <div class="card-title" style="--accent:var(--gold)">Top 20 Agents by Inquiries Handled</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div>
+        <table class="agent-table">
+          <thead>
+            <tr><th>#</th><th>Agent</th><th>Count</th></tr>
+          </thead>
+          <tbody id="agentTableA"></tbody>
+        </table>
+      </div>
+      <div>
+        <table class="agent-table">
+          <thead>
+            <tr><th>#</th><th>Agent</th><th>Count</th></tr>
+          </thead>
+          <tbody id="agentTableB"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Generated from CRM export · Jan 1 – Feb 12, 2026 · 4,761 records across 40 dimensions</p>
+</footer>
+
+<script>
+// ── Data ──────────────────────────────────────────────────
+const DAILY = {"2026-01-01":52,"2026-01-02":71,"2026-01-03":47,"2026-01-04":44,"2026-01-05":72,"2026-01-06":84,"2026-01-07":81,"2026-01-08":105,"2026-01-09":254,"2026-01-10":222,"2026-01-11":293,"2026-01-12":148,"2026-01-13":85,"2026-01-14":91,"2026-01-15":67,"2026-01-16":62,"2026-01-17":33,"2026-01-18":44,"2026-01-19":63,"2026-01-20":108,"2026-01-21":92,"2026-01-22":82,"2026-01-23":121,"2026-01-24":97,"2026-01-25":127,"2026-01-26":195,"2026-01-27":181,"2026-01-28":146,"2026-01-29":124,"2026-01-30":117,"2026-01-31":86,"2026-02-01":101,"2026-02-02":135,"2026-02-03":100,"2026-02-04":108,"2026-02-05":113,"2026-02-06":135,"2026-02-07":115,"2026-02-08":117,"2026-02-09":136,"2026-02-10":142,"2026-02-11":115,"2026-02-12":50};
+
+const AGENTS = {"Isha Tyagi":126,"Prabhakar Tiwari":120,"Santoshi Rawat":116,"Ashish Sharma":91,"Shivangi Singh":89,"Priyanka Dedha":88,"Khushbu Chand":87,"Ritu Mishra":85,"Md Mehtab":76,"Amr Ahmed Kandeel":75,"Anshika Verma":71,"Priyanka Priyadarshni":71,"Pranjal Singh":71,"Mudasir Manzoor":68,"Nermeen Mohamed elnajjar":68,"Divya Sharma":66,"Seif Essam Ahmed":66,"Aakhya Agarwal":60,"Gaurav Kumar Sharma":60,"Deepak Choudhary":58};
+
+const STAGE = {"Lead - Disqualified":1705,"Future Sale":575,"Developing":484,"Lost Opportunity":484,"Lead - Duplicate":446,"Offshore Developing":288,"Lead - Uncontacted":271,"Lead - CP Review":149,"Prospecting":114,"Closed Sale":95,"Lead - B2C Review":75,"Lead - Future":42,"Lead - New":28,"Unresponsive Client":4,"Closing":1};
+
+const LEAD_SOURCE = {"Facebook/Meta":2984,"Google Ads":777,"Website":677,"Others":211,"Instagram":39,"LinkedIn":31,"WhatsApp":24};
+
+const LOST = {"Uncontacted":854,"Not interested":339,"B2C - Need Physical Space":232,"Job Seeker":202,"Should not be opp.":103,"Other - Audited":78,"Other":71,"Went to competition":66,"Business no longer needed":64,"Activity restriction":59};
+
+const COUNTRY = {"UAE":1576,"India":1329,"Pakistan":436,"USA":163,"Saudi Arabia":131,"UK":129,"Egypt":73,"France":66,"Philippines":66,"Oman":56,"Turkey":52,"Australia":45,"New Zealand":41,"Singapore":37,"Kuwait":35};
+
+const METHOD = {"Online Form":4221,"Phone":124,"Channel Partner Form":114,"Chat":107,"Referral Form":85,"WhatsApp Business":64,"Walk-in":18,"Direct Email":14};
+
+const SHIFT = {"Shift 1":1916,"Shift 2":1276,"Shift 3":900,"Shift 1+2":502,"Shift 2+3":167};
+
+// ── Palette ───────────────────────────────────────────────
+const GOLD   = '#e8a937';
+const TEAL   = '#2dd4bf';
+const ROSE   = '#f43f5e';
+const VIOLET = '#818cf8';
+const BLUE   = '#38bdf8';
+const LIME   = '#a3e635';
+const MUTED  = '#374151';
+
+const PALETTE = [GOLD, TEAL, VIOLET, ROSE, BLUE, LIME, '#fb923c', '#c084fc', '#34d399', '#f472b6'];
+
+Chart.defaults.color = '#6b7280';
+Chart.defaults.borderColor = '#1e2128';
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size = 11;
+
+// ── Daily Trend ───────────────────────────────────────────
+(function(){
+  const labels = Object.keys(DAILY).map(d => {
+    const [,m,day] = d.split('-');
+    return `${parseInt(day)} ${['','Jan','Feb'][parseInt(m)]}`;
+  });
+  const values = Object.values(DAILY);
+  const ctx = document.getElementById('dailyChart').getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,220);
+  grad.addColorStop(0,'rgba(232,169,55,.35)');
+  grad.addColorStop(1,'rgba(232,169,55,0)');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        borderColor: GOLD,
+        backgroundColor: grad,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        tension: 0.4,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        backgroundColor: '#1a1d24', borderColor: '#2e333d', borderWidth: 1,
+        titleColor: '#e8a937', bodyColor: '#e4e8f0',
+        callbacks: { title: t => labels[t[0].dataIndex] }
+      }},
+      scales: {
+        x: { grid: { display: false }, ticks: { maxRotation: 0, maxTicksLimit: 12 } },
+        y: { grid: { color: '#1a1d24' }, border: { display: false } }
+      }
+    }
+  });
+})();
+
+// ── Lead Source Doughnut ──────────────────────────────────
+(function(){
+  const labels = Object.keys(LEAD_SOURCE);
+  const values = Object.values(LEAD_SOURCE);
+  new Chart(document.getElementById('sourceChart'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: PALETTE, borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { boxWidth: 10, padding: 10, font: { size: 10 } }
+        },
+        tooltip: {
+          backgroundColor: '#1a1d24', borderColor: '#2e333d', borderWidth: 1,
+          titleColor: TEAL, bodyColor: '#e4e8f0',
+          callbacks: {
+            label: ctx => ` ${ctx.parsed} (${((ctx.parsed/4761)*100).toFixed(1)}%)`
+          }
+        }
+      }
+    }
+  });
+})();
+
+// ── Stage List ────────────────────────────────────────────
+(function(){
+  const stages = Object.entries(STAGE).sort((a,b)=>b[1]-a[1]);
+  const max = stages[0][1];
+  const colors = [ROSE, GOLD, TEAL, ROSE, VIOLET, BLUE, MUTED, MUTED, TEAL, LIME];
+  const stageColors = {
+    'Lead - Disqualified': ROSE, 'Future Sale': GOLD, 'Developing': TEAL,
+    'Lost Opportunity': ROSE, 'Lead - Duplicate': VIOLET,
+    'Offshore Developing': BLUE, 'Lead - Uncontacted': MUTED,
+    'Lead - CP Review': MUTED, 'Prospecting': LIME,
+    'Closed Sale': '#22c55e', 'Lead - B2C Review': MUTED,
+    'Lead - Future': MUTED, 'Lead - New': BLUE,
+    'Unresponsive Client': MUTED, 'Closing': '#22c55e'
+  };
+  const list = document.getElementById('stageList');
+  stages.forEach(([name, val]) => {
+    const pct = (val / max * 100).toFixed(0);
+    const color = stageColors[name] || MUTED;
+    list.innerHTML += `
+      <div class="stage-row">
+        <span class="stage-name">${name}</span>
+        <div class="stage-bar-wrap">
+          <div class="stage-bar" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <span class="stage-num">${val.toLocaleString()}</span>
+      </div>`;
+  });
+})();
+
+// ── Lost Reasons ──────────────────────────────────────────
+(function(){
+  const labels = Object.keys(LOST);
+  const values = Object.values(LOST);
+  new Chart(document.getElementById('lostChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: ROSE + 'cc', borderRadius: 4, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { backgroundColor: '#1a1d24', borderColor: '#2e333d', borderWidth: 1, titleColor: ROSE, bodyColor: '#e4e8f0' }
+      },
+      scales: {
+        x: { grid: { color: '#1a1d24' }, border: { display: false } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+})();
+
+// ── Country Bar ───────────────────────────────────────────
+(function(){
+  const labels = Object.keys(COUNTRY);
+  const values = Object.values(COUNTRY);
+  new Chart(document.getElementById('countryChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: BLUE + 'bb', borderRadius: 4, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: { legend: { display: false }, tooltip: { backgroundColor:'#1a1d24', borderColor:'#2e333d', borderWidth:1, titleColor:BLUE, bodyColor:'#e4e8f0' } },
+      scales: {
+        x: { grid: { color: '#1a1d24' }, border: { display: false } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+})();
+
+// ── Contact Method Doughnut ───────────────────────────────
+(function(){
+  const labels = Object.keys(METHOD);
+  const values = Object.values(METHOD);
+  new Chart(document.getElementById('methodChart'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: PALETTE, borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 8, padding: 8, font: { size: 9 } } },
+        tooltip: {
+          backgroundColor: '#1a1d24', borderColor: '#2e333d', borderWidth: 1,
+          titleColor: GOLD, bodyColor: '#e4e8f0',
+          callbacks: { label: ctx => ` ${ctx.parsed} (${((ctx.parsed/4761)*100).toFixed(1)}%)` }
+        }
+      }
+    }
+  });
+})();
+
+// ── Shift Doughnut ────────────────────────────────────────
+(function(){
+  const labels = Object.keys(SHIFT);
+  const values = Object.values(SHIFT);
+  new Chart(document.getElementById('shiftChart'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: [LIME, GOLD, TEAL, VIOLET, ROSE], borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 8, padding: 8, font: { size: 9 } } },
+        tooltip: {
+          backgroundColor: '#1a1d24', borderColor: '#2e333d', borderWidth: 1,
+          titleColor: LIME, bodyColor: '#e4e8f0',
+          callbacks: { label: ctx => ` ${ctx.parsed} (${((ctx.parsed/4761)*100).toFixed(1)}%)` }
+        }
+      }
+    }
+  });
+})();
+
+// ── Agent Table ───────────────────────────────────────────
+(function(){
+  const entries = Object.entries(AGENTS);
+  const half = Math.ceil(entries.length / 2);
+  const rankColor = i => i===0?'rank rank-1':i===1?'rank rank-2':i===2?'rank rank-3':'rank';
+  entries.slice(0, half).forEach(([name, count], i) => {
+    document.getElementById('agentTableA').innerHTML += `
+      <tr>
+        <td class="${rankColor(i)}">${i+1}</td>
+        <td>${name}</td>
+        <td><span class="badge">${count}</span></td>
+      </tr>`;
+  });
+  entries.slice(half).forEach(([name, count], i) => {
+    const globalIdx = half + i;
+    document.getElementById('agentTableB').innerHTML += `
+      <tr>
+        <td class="${rankColor(globalIdx)}">${globalIdx+1}</td>
+        <td>${name}</td>
+        <td><span class="badge">${count}</span></td>
+      </tr>`;
+  });
+})();
+</script>
+</body>
+</html>
