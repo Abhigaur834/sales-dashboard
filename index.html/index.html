@@ -1,925 +1,388 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>QA.Hub · Performance Intelligence</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>QA.Hub V3 — Lead Conversion Intelligence</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <style>
-:root{
-  --bg:#07090d;--surf:#0c0f16;--card:#101520;--border:#1a2235;--bh:#263050;
-  --gold:#f59e0b;--gold2:#d97706;--teal:#10b981;--rose:#f43f5e;--vio:#8b5cf6;
-  --sky:#38bdf8;--lime:#84cc16;--orn:#fb923c;--pink:#f472b6;
-  --txt:#dde4f0;--mut:#566070;--dim:#1a2235;--rad:10px;--rad2:16px;
+
+body{
+font-family:Outfit;
+background:#07090d;
+color:#e2e8f0;
+margin:0;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}body{background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bh);border-radius:3px}
 
-/* HEADER */
-.hdr{display:flex;align-items:center;padding:0 24px;height:58px;background:var(--surf);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;gap:16px;backdrop-filter:blur(16px)}
-.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.bmark{width:32px;height:32px;background:linear-gradient(135deg,var(--gold),#b45309);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#000;letter-spacing:-.5px}
-.bname{font-weight:800;font-size:15px;letter-spacing:-.02em}.bname b{color:var(--gold)}
-.bsub{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--mut);line-height:1}
-.vd{width:1px;height:24px;background:var(--border)}
-.hmeta{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut)}
-.ld{width:6px;height:6px;border-radius:50%;flex-shrink:0;animation:lp 2.5s ease-in-out infinite}
-.ld.green{background:var(--teal)}.ld.amber{background:var(--gold)}.ld.red{background:var(--rose)}
-@keyframes lp{0%,100%{opacity:1}50%{opacity:.25}}
-.sep{color:var(--dim)}
-.hright{margin-left:auto;display:flex;align-items:center;gap:8px}
-.dbadge{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--mut);text-align:right;line-height:1.6}
-.dbadge span{color:var(--gold);font-weight:500}
-.hbtn{display:flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid var(--border);border-radius:var(--rad);background:none;color:var(--txt);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap}
-.hbtn:hover{border-color:var(--bh);background:var(--dim)}
-.hbtn.primary{background:var(--gold);border-color:var(--gold);color:#000;font-weight:700}
-.hbtn.primary:hover{background:#fbbf24;border-color:#fbbf24}
-.hbtn svg{width:12px;height:12px;flex-shrink:0}
+header{
+display:flex;
+justify-content:space-between;
+padding:15px 25px;
+background:#0c0f16;
+border-bottom:1px solid #1a2235;
+}
 
-/* TABS */
-.tnav{display:flex;align-items:center;padding:0 24px;background:var(--surf);border-bottom:1px solid var(--border);overflow-x:auto;gap:1px;position:sticky;top:58px;z-index:190}
-.tab{display:flex;align-items:center;gap:5px;padding:12px 14px 10px;background:none;border:none;border-bottom:2px solid transparent;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s;letter-spacing:.01em}
-.tab:hover{color:var(--txt)}.tab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
-.ticon{font-size:11px}
+.brand{
+font-weight:700;
+font-size:18px;
+color:#f59e0b;
+}
 
-/* LAYOUT */
-.main{padding:20px 24px;max-width:1800px;margin:0 auto}
-.panel{display:none}.panel.on{display:block}
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
-.r4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
-.r12{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px}
-.r21{display:grid;grid-template-columns:2fr 3fr;gap:12px;margin-bottom:12px}
-.r13{display:grid;grid-template-columns:1fr 3fr;gap:12px;margin-bottom:12px}
-.mb12{margin-bottom:12px}
-@media(max-width:1100px){.r2,.r3,.r4,.r12,.r21,.r13{grid-template-columns:1fr}}
+.main{
+padding:20px;
+}
 
-/* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--rad2);padding:16px 18px;overflow:hidden}
-.card.np{padding:0}
-.ctitle{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.ctitle .bar{width:3px;height:12px;border-radius:2px;background:var(--ca,var(--gold));flex-shrink:0}
-.ctitle .ml{margin-left:auto;font-size:9.5px;color:var(--dim)}
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-bottom:20px;
+}
 
-/* KPI GRID */
-.kg{display:grid;gap:10px;margin-bottom:12px}
-.k8{grid-template-columns:repeat(8,1fr)}.k4{grid-template-columns:repeat(4,1fr)}.k6{grid-template-columns:repeat(6,1fr)}
-@media(max-width:1500px){.k8{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:1000px){.k8,.k4,.k6{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--rad2);padding:14px 16px 12px;position:relative;overflow:hidden;transition:border-color .2s,transform .15s}
-.kpi:hover{border-color:var(--bh);transform:translateY(-1px)}
-.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--gold));border-radius:2px 2px 0 0}
-.kl{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:6px}
-.kv{font-size:1.8rem;font-weight:800;color:var(--kc,var(--gold));line-height:1;letter-spacing:-.03em}
-.kv.md{font-size:1.25rem;padding-top:3px}
-.ks{font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--mut);margin-top:4px}
-.kdelta{display:inline-flex;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;font-size:9px;padding:1px 5px;border-radius:3px;margin-top:3px}
-.kdelta.up{background:rgba(16,185,129,.12);color:var(--teal)}.kdelta.dn{background:rgba(244,63,94,.12);color:var(--rose)}
+.card{
+background:#101520;
+border:1px solid #1a2235;
+padding:15px;
+border-radius:10px;
+}
 
-/* STAT ROW */
-.chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.chip{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--ca,var(--gold));border-radius:var(--rad);padding:9px 13px}
-.chl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
-.chv{font-size:1.1rem;font-weight:700;color:var(--ca,var(--gold));font-family:'JetBrains Mono',monospace}
+.kpi{
+font-size:28px;
+font-weight:700;
+color:#f59e0b;
+}
 
-/* SECTION DIVIDER */
-.sdiv{font-size:9.5px;text-transform:uppercase;letter-spacing:.15em;color:var(--mut);margin:18px 0 11px;display:flex;align-items:center;gap:10px}
-.sdiv::after{content:'';flex:1;height:1px;background:var(--border)}
+.chart{
+height:260px;
+}
 
-/* CHART WRAPPER */
-.cw{position:relative}.h140{height:140px}.h180{height:180px}.h200{height:200px}.h220{height:220px}
-.h240{height:240px}.h260{height:260px}.h280{height:280px}.h300{height:300px}.h320{height:320px}.h360{height:360px}
+table{
+width:100%;
+border-collapse:collapse;
+}
 
-/* FUNNEL */
-.funnel{display:flex;flex-direction:column;gap:6px;padding:4px 0}
-.frow{display:flex;align-items:center;gap:10px}
-.flbl{font-size:11px;color:var(--mut);min-width:145px;white-space:nowrap}
-.fbw{flex:1;height:32px;display:flex;align-items:center}
-.fbar{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:9px;font-size:10.5px;font-weight:700;color:#000;min-width:40px;transition:width .8s ease}
-.fn{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--txt);min-width:46px;text-align:right}
-.fp{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--mut);min-width:38px;text-align:right}
+th,td{
+padding:10px;
+border-bottom:1px solid #1a2235;
+text-align:left;
+}
 
-/* STAGE BARS */
-.sbars{display:flex;flex-direction:column;gap:7px}
-.sbrow{display:flex;align-items:center;gap:8px}
-.sbname{font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.sbtrack{flex:2;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
-.sbfill{height:100%;border-radius:3px;transition:width .8s}
-.sbcnt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mut);min-width:38px;text-align:right}
+.ai{
+background:#0c0f16;
+border-left:4px solid #10b981;
+padding:12px;
+margin-bottom:10px;
+border-radius:5px;
+}
 
-/* TABLES */
-.tscroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;padding:7px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap}
-td{padding:8px 10px;border-bottom:1px solid var(--border);font-size:11.5px;vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--surf)}
-.rk{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mut)}
-.r1{color:var(--gold);font-weight:700}.r2c{color:#94a3b8;font-weight:700}.r3c{color:#b87333;font-weight:700}
-.pill{display:inline-block;padding:1px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px}
-.pt{background:rgba(16,185,129,.12);color:var(--teal)}.pl{background:rgba(139,92,246,.12);color:var(--vio)}
-.pg{background:rgba(245,158,11,.12);color:var(--gold)}
-.mbar{display:inline-flex;vertical-align:middle;margin-left:6px;width:60px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.mfill{background:var(--gold);height:100%}
-.note{font-size:9.5px;color:var(--mut);margin-top:6px;font-style:italic;line-height:1.5}
+button{
+background:#f59e0b;
+border:none;
+padding:7px 14px;
+border-radius:6px;
+cursor:pointer;
+}
 
-/* INSIGHTS */
-.ibox{display:flex;flex-direction:column;gap:8px}
-.ins{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--ic,var(--gold));border-radius:var(--rad);padding:10px 12px;display:flex;gap:8px;align-items:flex-start}
-.iico{font-size:14px;flex-shrink:0;margin-top:1px}
-.itxt{font-size:11px;line-height:1.55}
-.itxt strong{color:var(--ic,var(--gold))}
-
-/* MODALS */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);z-index:1000;display:none;align-items:center;justify-content:center}
-.overlay.open{display:flex}
-.mbox{background:var(--card);border:1px solid var(--border);border-radius:var(--rad2);padding:26px;width:520px;max-width:92vw;max-height:90vh;overflow-y:auto}
-.mtitle{font-size:16px;font-weight:700;margin-bottom:4px}
-.msub{font-size:12px;color:var(--mut);margin-bottom:20px;line-height:1.6}
-.dzone{border:2px dashed var(--bh);border-radius:var(--rad2);padding:32px;text-align:center;cursor:pointer;transition:.2s}
-.dzone:hover,.dzone.over{border-color:var(--gold);background:rgba(245,158,11,.04)}
-.dico{font-size:28px;margin-bottom:8px}
-.dtxt{font-size:13px;font-weight:600;margin-bottom:4px}
-.dsub{font-size:11px;color:var(--mut)}
-.progress{margin-top:12px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;display:none}
-.pbar{height:100%;background:var(--gold);border-radius:2px;transition:width .3s;width:0%}
-.upst{margin-top:8px;font-size:11px;color:var(--mut);min-height:16px}
-.mact{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
-.mbtn{padding:8px 16px;border-radius:var(--rad);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:.15s;font-weight:500}
-.mbtn.sec{background:none;border:1px solid var(--border);color:var(--txt)}.mbtn.sec:hover{border-color:var(--bh)}
-.mbtn.pri{background:var(--gold);border:none;color:#000;font-weight:700}.mbtn.pri:hover{background:#fbbf24}
-.finp{width:100%;background:var(--surf);border:1px solid var(--border);border-radius:var(--rad);padding:10px 12px;color:var(--txt);font-family:'JetBrains Mono',monospace;font-size:11px;resize:vertical;min-height:90px;outline:none;transition:.15s}
-.finp:focus{border-color:var(--gold)}
-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:5px;margin-top:12px}
-.setup-steps{background:var(--surf);border:1px solid var(--border);border-radius:var(--rad);padding:12px 14px;margin-bottom:16px;font-size:11.5px;line-height:2}
-.setup-steps a{color:var(--gold);text-decoration:none}
-.setup-steps a:hover{text-decoration:underline}
-.fbstatus{display:flex;align-items:center;gap:8px;font-size:11px;padding:8px 12px;border-radius:var(--rad);margin-top:10px}
-.fbstatus.ok{background:rgba(16,185,129,.1);color:var(--teal);border:1px solid rgba(16,185,129,.2)}
-.fbstatus.err{background:rgba(244,63,94,.1);color:var(--rose);border:1px solid rgba(244,63,94,.2)}
-.fbstatus.warn{background:rgba(245,158,11,.1);color:var(--gold);border:1px solid rgba(245,158,11,.2)}
-
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--teal);border-radius:var(--rad);padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;z-index:2000;transform:translateY(60px);opacity:0;transition:all .3s ease;max-width:320px;pointer-events:none}
-.toast.show{transform:translateY(0);opacity:1}
-
-/* BANNER */
-.banner{display:flex;align-items:center;gap:10px;padding:9px 16px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rad);margin-bottom:14px;font-size:11.5px;color:var(--gold)}
-.banner button{margin-left:auto;background:none;border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-size:11px;padding:3px 10px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap}
-.banner button:hover{background:rgba(245,158,11,.1)}
 </style>
+
 </head>
+
 <body>
 
-<!-- ══ HEADER ══ -->
-<header class="hdr">
-  <div class="brand">
-    <div class="bmark">QA</div>
-    <div><div class="bname">QA<b>.</b>Hub</div><div class="bsub">Performance Intelligence</div></div>
-  </div>
-  <div class="vd"></div>
-  <div class="hmeta">
-    <div class="ld green" id="hDot"></div>
-    <span id="hRecords">4,761 records</span>
-    <span class="sep">·</span>
-    <span id="hRange">Jan 1 – Feb 12, 2026</span>
-    <span class="sep">·</span>
-    <span id="hAgents">38 agents</span>
-  </div>
-  <div class="hright">
-    <div class="dbadge" id="dbadge">Embedded data<br><span id="hLastUpd">Use Update Data to sync Firebase</span></div>
-    <button class="hbtn" onclick="openFbModal()" title="Configure Firebase">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      Firebase
-    </button>
-    <button class="hbtn primary" onclick="openUpload()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg>
-      Update Data
-    </button>
-  </div>
+<header>
+
+<div class="brand">QA.Hub V3</div>
+
+<div>
+<input type="file" id="upload">
+</div>
+
 </header>
 
-<!-- ══ TABS ══ -->
-<nav class="tnav">
-  <button class="tab on" data-tab="ov"><span class="ticon">◎</span> Overview</button>
-  <button class="tab" data-tab="pl"><span class="ticon">⬡</span> Pipeline</button>
-  <button class="tab" data-tab="ag"><span class="ticon">◈</span> Agents</button>
-  <button class="tab" data-tab="ch"><span class="ticon">⊕</span> Channels</button>
-  <button class="tab" data-tab="ge"><span class="ticon">◐</span> Geography</button>
-  <button class="tab" data-tab="op"><span class="ticon">⚙</span> Operations</button>
-  <button class="tab" data-tab="tr"><span class="ticon">∿</span> Trends</button>
-</nav>
-
-<!-- ══ PANELS ══ -->
 <div class="main">
 
-<!-- OVERVIEW -->
-<div id="p-ov" class="panel on">
-  <div id="fb-banner" class="banner" style="display:none">
-    <span>⚡</span>
-    <span id="fb-banner-txt">Firebase not configured — showing embedded data.</span>
-    <button onclick="openFbModal()">Configure Firebase →</button>
-  </div>
-  <div class="kg k8 mb12">
-    <div class="kpi" style="--kc:var(--gold)"><div class="kl">Total Inquiries</div><div class="kv" id="k-tot">4,761</div><div class="ks">Jan 1 – Feb 12, 2026</div></div>
-    <div class="kpi" style="--kc:var(--teal)"><div class="kl">Closed Sales</div><div class="kv" id="k-cls">95</div><div class="ks" id="k-cr">2.0% close rate</div></div>
-    <div class="kpi" style="--kc:var(--vio)"><div class="kl">Active Pipeline</div><div class="kv" id="k-ops">2,041</div><div class="ks">Status: Ops</div></div>
-    <div class="kpi" style="--kc:var(--sky)"><div class="kl">Active Leads</div><div class="kv" id="k-ld">2,720</div><div class="ks">Status: Lead</div></div>
-    <div class="kpi" style="--kc:var(--rose)"><div class="kl">Lost Opportunities</div><div class="kv" id="k-lo">484</div><div class="ks" id="k-lop">10.2% of total</div></div>
-    <div class="kpi" style="--kc:#ef4444"><div class="kl">Disqualified</div><div class="kv" id="k-dq">1,705</div><div class="ks" id="k-dqp">35.8% of total</div></div>
-    <div class="kpi" style="--kc:var(--lime)"><div class="kl">Avg Daily Volume</div><div class="kv" id="k-ad">110.7</div><div class="ks" id="k-days">43 active days</div></div>
-    <div class="kpi" style="--kc:var(--orn)"><div class="kl">Active Agents</div><div class="kv" id="k-nag">38</div><div class="ks" id="k-agavg">Avg 125.3/agent</div></div>
-  </div>
-  <div class="r12">
-    <div class="card"><div class="ctitle"><div class="bar"></div>Daily Inquiry Volume</div><div class="cw h220"><canvas id="c-ov-daily"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--sky)"></div>Lead vs Pipeline Status</div><div class="cw h220"><canvas id="c-ov-status"></canvas></div></div>
-  </div>
-  <div class="r3">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--vio)"></div>Lead Source Breakdown</div><div class="cw h200"><canvas id="c-ov-src"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--lime)"></div>Top 8 Agents by Volume</div><div class="cw h200"><canvas id="c-ov-ag"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--rose)"></div>Key Insights</div><div class="ibox" id="insights"></div></div>
-  </div>
+<div class="grid">
+
+<div class="card">
+Total Leads
+<div class="kpi" id="total">0</div>
 </div>
 
-<!-- PIPELINE -->
-<div id="p-pl" class="panel">
-  <div class="chips">
-    <div class="chip" style="--ca:var(--gold)"><div class="chl">Total</div><div class="chv" id="pp-tot">4,761</div></div>
-    <div class="chip" style="--ca:var(--teal)"><div class="chl">Close Rate</div><div class="chv" id="pp-cr">2.0%</div></div>
-    <div class="chip" style="--ca:var(--vio)"><div class="chl">Ops Rate</div><div class="chv" id="pp-or">42.9%</div></div>
-    <div class="chip" style="--ca:var(--rose)"><div class="chl">Lost+Disq Rate</div><div class="chv" id="pp-nr">45.6%</div></div>
-    <div class="chip" style="--ca:var(--sky)"><div class="chl">Jan Closed</div><div class="chv">69</div></div>
-    <div class="chip" style="--ca:var(--lime)"><div class="chl">Feb Closed (12d)</div><div class="chv">26</div></div>
-    <div class="chip" style="--ca:var(--orn)"><div class="chl">Uncontacted</div><div class="chv" id="pp-unc">271</div></div>
-  </div>
-  <div class="r21 mb12">
-    <div class="card">
-      <div class="ctitle"><div class="bar"></div>Conversion Funnel</div>
-      <div class="funnel" id="funnel"></div>
-      <p class="note">* Funnel shows progression from all inquiries through key qualifying stages to closed sale</p>
-    </div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--vio)"></div>All Pipeline Stages</div><div class="sbars" id="stageBars"></div></div>
-  </div>
-  <div class="r2">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--sky)"></div>Stage Distribution — Jan vs Feb</div><div class="cw h280"><canvas id="c-pl-month"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--teal)"></div>Outcome Category Breakdown</div><div class="cw h280"><canvas id="c-pl-out"></canvas></div></div>
-  </div>
+<div class="card">
+Closed Sales
+<div class="kpi" id="closed">0</div>
 </div>
 
-<!-- AGENTS -->
-<div id="p-ag" class="panel">
-  <div class="chips">
-    <div class="chip" style="--ca:var(--gold)"><div class="chl">Total Agents</div><div class="chv">38</div></div>
-    <div class="chip" style="--ca:var(--teal)"><div class="chl">Top Agent</div><div class="chv" style="font-size:.78rem" id="ag-top">Isha Tyagi</div></div>
-    <div class="chip" style="--ca:var(--vio)"><div class="chl">Top Count</div><div class="chv" id="ag-topn">126</div></div>
-    <div class="chip" style="--ca:var(--sky)"><div class="chl">Avg / Agent</div><div class="chv" id="ag-avg">125.3</div></div>
-    <div class="chip" style="--ca:var(--rose)"><div class="chl">Top Closer</div><div class="chv" style="font-size:.78rem" id="ag-closer">Priyanka Dedha</div></div>
-    <div class="chip" style="--ca:var(--lime)"><div class="chl">Top Closures</div><div class="chv" id="ag-closern">5</div></div>
-  </div>
-  <div class="r2 mb12">
-    <div class="card"><div class="ctitle"><div class="bar"></div>Top 15 Agents — Total Volume</div><div class="cw h300"><canvas id="c-ag-top"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--sky)"></div>Lead vs Ops Split — Top 20 Agents</div><div class="cw h300"><canvas id="c-ag-split"></canvas></div></div>
-  </div>
-  <div class="r2">
-    <div class="card">
-      <div class="ctitle"><div class="bar" style="background:var(--vio)"></div>Full Agent Leaderboard</div>
-      <div class="tscroll"><table>
-        <thead><tr><th>#</th><th>Agent</th><th>Total</th><th>Ops</th><th>Lead</th><th>Ops%</th><th>Volume</th></tr></thead>
-        <tbody id="ag-tbody"></tbody>
-      </table></div>
-    </div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--lime)"></div>Closed Sales by Agent — Top 10</div><div class="cw h280"><canvas id="c-ag-cls"></canvas></div></div>
-  </div>
+<div class="card">
+Conversion Rate
+<div class="kpi" id="rate">0%</div>
 </div>
 
-<!-- CHANNELS -->
-<div id="p-ch" class="panel">
-  <div class="chips">
-    <div class="chip" style="--ca:var(--gold)"><div class="chl">Top Source</div><div class="chv" style="font-size:.78rem">Facebook/Meta</div></div>
-    <div class="chip" style="--ca:var(--vio)"><div class="chl">Meta Share</div><div class="chv">62.7%</div></div>
-    <div class="chip" style="--ca:var(--sky)"><div class="chl">Google Ads</div><div class="chv" id="ch-g">777</div></div>
-    <div class="chip" style="--ca:var(--teal)"><div class="chl">Website</div><div class="chv" id="ch-w">677</div></div>
-    <div class="chip" style="--ca:var(--lime)"><div class="chl">Online Form %</div><div class="chv">88.7%</div></div>
-    <div class="chip" style="--ca:var(--orn)"><div class="chl">Unique Sources</div><div class="chv">16</div></div>
-  </div>
-  <div class="r2 mb12">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--vio)"></div>Lead Source Distribution</div><div class="cw h280"><canvas id="c-ch-src"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar"></div>Top Sources — Jan vs Feb</div><div class="cw h280"><canvas id="c-ch-jf"></canvas></div></div>
-  </div>
-  <div class="r2">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--sky)"></div>Contact Method Distribution</div><div class="cw h240"><canvas id="c-ch-mth"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--teal)"></div>All Sources Ranked by Volume</div><div class="cw h240"><canvas id="c-ch-bar"></canvas></div></div>
-  </div>
+<div class="card">
+Active Agents
+<div class="kpi" id="agents">0</div>
 </div>
 
-<!-- GEOGRAPHY -->
-<div id="p-ge" class="panel">
-  <div class="chips">
-    <div class="chip" style="--ca:var(--sky)"><div class="chl">UAE</div><div class="chv">1,576</div></div>
-    <div class="chip" style="--ca:var(--gold)"><div class="chl">UAE Share</div><div class="chv">33.1%</div></div>
-    <div class="chip" style="--ca:var(--vio)"><div class="chl">India</div><div class="chv">1,329</div></div>
-    <div class="chip" style="--ca:var(--teal)"><div class="chl">Pakistan</div><div class="chv">436</div></div>
-    <div class="chip" style="--ca:var(--lime)"><div class="chl">International</div><div class="chv">66.9%</div></div>
-    <div class="chip" style="--ca:var(--orn)"><div class="chl">Top 3 Share</div><div class="chv">70.4%</div></div>
-  </div>
-  <div class="card mb12"><div class="ctitle"><div class="bar" style="background:var(--sky)"></div>Top 15 Countries by Inquiry Volume</div><div class="cw h300"><canvas id="c-ge-top"></canvas></div></div>
-  <div class="r2">
-    <div class="card"><div class="ctitle"><div class="bar"></div>Geographic Split</div><div class="cw h280"><canvas id="c-ge-spl"></canvas></div></div>
-    <div class="card">
-      <div class="ctitle"><div class="bar" style="background:var(--vio)"></div>Country Rankings</div>
-      <div class="tscroll"><table>
-        <thead><tr><th>#</th><th>Country</th><th>Count</th><th>Share</th><th>Volume</th></tr></thead>
-        <tbody id="ge-tbody"></tbody>
-      </table></div>
-    </div>
-  </div>
 </div>
 
-<!-- OPERATIONS -->
-<div id="p-op" class="panel">
-  <div class="chips">
-    <div class="chip" style="--ca:var(--lime)"><div class="chl">Top Shift</div><div class="chv" style="font-size:.78rem">Shift 1 · 40.2%</div></div>
-    <div class="chip" style="--ca:var(--rose)"><div class="chl">Never Contacted</div><div class="chv">854</div></div>
-    <div class="chip" style="--ca:var(--gold)"><div class="chl">Uncontacted %</div><div class="chv">17.9%</div></div>
-    <div class="chip" style="--ca:var(--vio)"><div class="chl">#1 Lost Reason</div><div class="chv" style="font-size:.78rem">Uncontacted</div></div>
-    <div class="chip" style="--ca:var(--sky)"><div class="chl">Online Form Rate</div><div class="chv">88.7%</div></div>
-    <div class="chip" style="--ca:var(--teal)"><div class="chl">Walk-ins</div><div class="chv">18</div></div>
-  </div>
-  <div class="r3 mb12">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--lime)"></div>Shift Distribution</div><div class="cw h240"><canvas id="c-op-sh"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--rose)"></div>Lost Reasons — January</div><div class="cw h240"><canvas id="c-op-lj"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--orn)"></div>Lost Reasons — February</div><div class="cw h240"><canvas id="c-op-lf"></canvas></div></div>
-  </div>
-  <div class="r2">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--rose)"></div>All Lost Reasons Combined</div><div class="cw h280"><canvas id="c-op-la"></canvas></div></div>
-    <div class="card">
-      <div class="ctitle"><div class="bar" style="background:var(--vio)"></div>Lost Reason Detail — Jan vs Feb</div>
-      <div class="tscroll"><table>
-        <thead><tr><th>Reason</th><th>Jan</th><th>Feb</th><th>Total</th><th>%</th></tr></thead>
-        <tbody id="lr-tbody"></tbody>
-      </table></div>
-    </div>
-  </div>
+<div class="card">
+<h3>Daily Lead Volume</h3>
+<canvas id="daily" class="chart"></canvas>
 </div>
 
-<!-- TRENDS -->
-<div id="p-tr" class="panel">
-  <div class="chips">
-    <div class="chip" style="--ca:var(--gold)"><div class="chl">January Total</div><div class="chv">3,394</div></div>
-    <div class="chip" style="--ca:var(--sky)"><div class="chl">February (12d)</div><div class="chv">1,367</div></div>
-    <div class="chip" style="--ca:var(--vio)"><div class="chl">Jan Daily Avg</div><div class="chv">109.5</div></div>
-    <div class="chip" style="--ca:var(--teal)"><div class="chl">Feb Daily Avg</div><div class="chv">113.9</div></div>
-    <div class="chip" style="--ca:var(--rose)"><div class="chl">Peak Day</div><div class="chv" style="font-size:.78rem">Jan 11 · 293</div></div>
-    <div class="chip" style="--ca:var(--lime)"><div class="chl">Lowest Day</div><div class="chv" style="font-size:.78rem">Jan 17 · 33</div></div>
-  </div>
-  <div class="card mb12"><div class="ctitle"><div class="bar"></div>Daily Inquiry Volume — Complete Timeline</div><div class="cw h260"><canvas id="c-tr-day"></canvas></div></div>
-  <div class="r2 mb12">
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--vio)"></div>Weekly Volume — Lead vs Ops Breakdown</div><div class="cw h260"><canvas id="c-tr-wk"></canvas></div></div>
-    <div class="card"><div class="ctitle"><div class="bar" style="background:var(--teal)"></div>Cumulative Growth Curve</div><div class="cw h260"><canvas id="c-tr-run"></canvas></div></div>
-  </div>
-  <div class="card"><div class="ctitle"><div class="bar" style="background:var(--sky)"></div>Jan vs Feb Day-by-Day Comparison Overlay</div><div class="cw h260"><canvas id="c-tr-ov"></canvas></div><p class="note">* Feb aligned by day-of-month. Line ends at day 12 for February.</p></div>
+<div class="card">
+<h3>Lead Source Performance</h3>
+<canvas id="source" class="chart"></canvas>
 </div>
 
-</div><!-- /main -->
-
-<!-- ══ UPLOAD MODAL ══ -->
-<div class="overlay" id="upOverlay">
-  <div class="mbox">
-    <div class="mtitle">Update Dashboard Data</div>
-    <div class="msub">Upload a new Excel (.xlsx) or CSV (.csv) file. All charts and KPIs will refresh instantly. If Firebase is configured, data syncs automatically for all users.</div>
-    <div class="dzone" id="dzone" onclick="document.getElementById('fileInput').click()" ondragover="dz(event,true)" ondragleave="dz(event,false)" ondrop="onDrop(event)">
-      <div class="dico">📊</div>
-      <div class="dtxt" id="dztxt">Drop file here or click to browse</div>
-      <div class="dsub">Supports .xlsx · .csv · Column headers must match original export</div>
-    </div>
-    <div class="progress" id="progressWrap"><div class="pbar" id="pbar"></div></div>
-    <div class="upst" id="upst"></div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="onFile(this.files[0])">
-    <div class="mact"><button class="mbtn sec" onclick="closeUpload()">Cancel</button></div>
-  </div>
+<div class="card">
+<h3>Lead Conversion Funnel</h3>
+<canvas id="funnel" class="chart"></canvas>
 </div>
 
-<!-- ══ FIREBASE MODAL ══ -->
-<div class="overlay" id="fbOverlay">
-  <div class="mbox">
-    <div class="mtitle">Firebase Configuration</div>
-    <div class="msub">Connect your Firebase project to enable cloud sync. When you upload new data, all users see updated numbers in real-time.</div>
-    <div class="setup-steps">
-      1. Open <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>
-      2. Create/select project → Project Settings → Add Web App<br>
-      3. Create a <strong>Firestore Database</strong> in your project (test mode is fine)<br>
-      4. Copy the <code>firebaseConfig</code> object below (JSON format)
-    </div>
-    <label>Firebase Config (JSON)</label>
-    <textarea class="finp" id="fbConfigInput" rows="7" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'></textarea>
-    <div id="fbStatusMsg"></div>
-    <div class="mact">
-      <button class="mbtn sec" onclick="closeFbModal()">Cancel</button>
-      <button class="mbtn sec" onclick="clearFbConfig()">Disconnect</button>
-      <button class="mbtn pri" onclick="saveFbConfig()">Connect & Save</button>
-    </div>
-  </div>
+<div class="card">
+
+<h3>Agent Leaderboard</h3>
+
+<table>
+<thead>
+
+<tr>
+<th>Agent</th>
+<th>Leads</th>
+<th>Closed</th>
+<th>Conversion %</th>
+</tr>
+
+</thead>
+
+<tbody id="agentTable"></tbody>
+
+</table>
+
 </div>
 
-<!-- ══ TOAST ══ -->
-<div class="toast" id="toast">
-  <span id="toastIco">✓</span>
-  <span id="toastMsg">Dashboard updated successfully</span>
+<div class="card">
+
+<h3>AI Sales Insights</h3>
+
+<div id="insights"></div>
+
 </div>
 
-<!-- ══ SCRIPTS ══ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</div>
+
 <script>
-// ══════════════════════════════════════════════════════════════
-// EMBEDDED DEFAULT DATA
-// ══════════════════════════════════════════════════════════════
-const DEFAULT = {
-  total:4761, days:43, dateRange:'Jan 1 – Feb 12, 2026',
-  byStage:{"Lead - Disqualified":1705,"Future Sale":575,"Developing":484,"Lost Opportunity":484,"Lead - Duplicate":446,"Offshore Developing":288,"Lead - Uncontacted":271,"Lead - CP Review":149,"Prospecting":114,"Closed Sale":95,"Lead - B2C Review":75,"Lead - Future":42,"Lead - New":28,"Unresponsive Client":4,"Closing":1},
-  bySource:{"Facebook/Meta":2984,"Google Ads":777,"Website":677,"Others":211,"Instagram":39,"LinkedIn":31,"WhatsApp":24,"On-Demand Video":4,"Click to Call":3,"Google Business":3,"Referral":2,"Email":2},
-  byMethod:{"Online Form":4221,"Phone":124,"Channel Partner Form":114,"Chat":107,"Referral Form":85,"WhatsApp Business":64,"Walk-in":18,"Direct Email":14},
-  byLostReason:{"Uncontacted":854,"Not interested in setting up the business":339,"B2C Review - Need Physical Space":232,"Job Seeker":202,"Should not be an opportunity":103,"Other - Audited":78,"Other":71,"Went to competition":66,"Business no longer needed":64,"Business activity restriction":59,"Too expensive/Payment plan":51,"Channel Partner":31,"B2C - More than 6 Visa":31,"B2C - Restricted Activity":30},
-  byCountry:{"UAE":1576,"India":1329,"Pakistan":436,"USA":163,"Saudi Arabia":131,"UK":129,"Egypt":73,"France":66,"Philippines":66,"Oman":56,"Turkey":52,"Australia":45,"New Zealand":41,"Singapore":37,"Kuwait":35},
-  byStatus:{"Lead":2720,"Ops":2041},
-  byShift:{"Shift 1":1916,"Shift 2":1276,"Shift 3":900,"Shift 1+2":502,"Shift 2+3":167},
-  byAgent:{"Isha Tyagi":126,"Prabhakar Tiwari":120,"Santoshi Rawat":116,"Ashish Sharma":91,"Shivangi Singh":89,"Priyanka Dedha":88,"Khushbu Chand":87,"Ritu Mishra":85,"Md Mehtab":76,"Amr Ahmed Kandeel":75,"Anshika Verma":71,"Priyanka Priyadarshni":71,"Pranjal Singh":71,"Mudasir Manzoor":68,"Nermeen Mohamed elnajjar":68,"Divya Sharma":66,"Seif Essam Ahmed":66,"Aakhya Agarwal":60,"Gaurav Kumar Sharma":60,"Deepak Choudhary":58,"Ronit Masih":58,"Sonali Singh":57,"Antwan George Awad":55,"Deepak Shukla":49,"Tushar Wadhawan":48,"Abhishek Kumar Mishra":44,"Nandini Panwar":43,"Dimple Khanna":43,"Gagandeep Singh":42,"Marcelino Sherif":40},
-  agentStatus:{"Isha Tyagi":{"Ops":92,"Lead":34},"Prabhakar Tiwari":{"Ops":63,"Lead":57},"Santoshi Rawat":{"Ops":74,"Lead":42},"Ashish Sharma":{"Ops":56,"Lead":35},"Shivangi Singh":{"Ops":28,"Lead":61},"Priyanka Dedha":{"Ops":47,"Lead":41},"Khushbu Chand":{"Ops":50,"Lead":37},"Ritu Mishra":{"Ops":39,"Lead":46},"Md Mehtab":{"Ops":51,"Lead":25},"Amr Ahmed Kandeel":{"Ops":52,"Lead":23},"Anshika Verma":{"Ops":54,"Lead":17},"Priyanka Priyadarshni":{"Ops":48,"Lead":23},"Pranjal Singh":{"Ops":38,"Lead":33},"Mudasir Manzoor":{"Ops":26,"Lead":42},"Nermeen Mohamed elnajjar":{"Ops":44,"Lead":24},"Divya Sharma":{"Ops":46,"Lead":20},"Seif Essam Ahmed":{"Ops":46,"Lead":20},"Aakhya Agarwal":{"Ops":34,"Lead":26},"Gaurav Kumar Sharma":{"Ops":27,"Lead":33},"Deepak Choudhary":{"Ops":32,"Lead":26}},
-  closedByAgent:{"Priyanka Dedha":5,"Shivangi Singh":3,"Nermeen Mohamed elnajjar":3,"Priyanka Priyadarshni":2,"Ritu Mishra":2,"Santoshi Rawat":2,"Prabhakar Tiwari":2,"Nikhil Kumar":1,"Khushbu Chand":1,"Nimisha Chauhan":1},
-  byDate:{"2026-01-01":52,"2026-01-02":71,"2026-01-03":47,"2026-01-04":44,"2026-01-05":72,"2026-01-06":84,"2026-01-07":81,"2026-01-08":105,"2026-01-09":254,"2026-01-10":222,"2026-01-11":293,"2026-01-12":148,"2026-01-13":85,"2026-01-14":91,"2026-01-15":67,"2026-01-16":62,"2026-01-17":33,"2026-01-18":44,"2026-01-19":63,"2026-01-20":108,"2026-01-21":92,"2026-01-22":82,"2026-01-23":121,"2026-01-24":97,"2026-01-25":127,"2026-01-26":195,"2026-01-27":181,"2026-01-28":146,"2026-01-29":124,"2026-01-30":117,"2026-01-31":86,"2026-02-01":101,"2026-02-02":135,"2026-02-03":100,"2026-02-04":108,"2026-02-05":113,"2026-02-06":135,"2026-02-07":115,"2026-02-08":117,"2026-02-09":136,"2026-02-10":142,"2026-02-11":115,"2026-02-12":50},
-  running:{"2026-01-01":52,"2026-01-02":123,"2026-01-03":170,"2026-01-04":214,"2026-01-05":286,"2026-01-06":370,"2026-01-07":451,"2026-01-08":556,"2026-01-09":810,"2026-01-10":1032,"2026-01-11":1325,"2026-01-12":1473,"2026-01-13":1558,"2026-01-14":1649,"2026-01-15":1716,"2026-01-16":1778,"2026-01-17":1811,"2026-01-18":1855,"2026-01-19":1918,"2026-01-20":2026,"2026-01-21":2118,"2026-01-22":2200,"2026-01-23":2321,"2026-01-24":2418,"2026-01-25":2545,"2026-01-26":2740,"2026-01-27":2921,"2026-01-28":3067,"2026-01-29":3191,"2026-01-30":3308,"2026-01-31":3394,"2026-02-01":3495,"2026-02-02":3630,"2026-02-03":3730,"2026-02-04":3838,"2026-02-05":3951,"2026-02-06":4086,"2026-02-07":4201,"2026-02-08":4318,"2026-02-09":4454,"2026-02-10":4596,"2026-02-11":4711,"2026-02-12":4761},
-  weeklyStatus:{"WK-1":{"Lead":654,"Ops":604},"WK-2":{"Lead":1188,"Ops":570},"WK-3":{"Lead":202,"Ops":267},"WK-4":{"Lead":518,"Ops":431},"WK-5":{"Lead":158,"Ops":169}},
-  stageByMonth:{"Jan":{"Closed Sale":69,"Closing":1,"Developing":192,"Future Sale":420,"Lead - B2C Review":37,"Lead - CP Review":95,"Lead - Disqualified":1525,"Lead - Duplicate":318,"Lead - Future":18,"Lead - New":9,"Lead - Uncontacted":8,"Lost Opportunity":406,"Offshore Developing":288,"Prospecting":4,"Unresponsive Client":4},"Feb":{"Closed Sale":26,"Developing":292,"Future Sale":155,"Lead - B2C Review":38,"Lead - CP Review":54,"Lead - Disqualified":180,"Lead - Duplicate":128,"Lead - Future":24,"Lead - New":19,"Lead - Uncontacted":263,"Lost Opportunity":78,"Prospecting":110}},
-  sourceByMonth:{"Facebook/Meta":{"Jan":2209,"Feb":775},"Google Ads":{"Jan":537,"Feb":240},"Website":{"Jan":429,"Feb":248},"Others":{"Jan":129,"Feb":82},"Instagram":{"Jan":28,"Feb":11},"LinkedIn":{"Jan":26,"Feb":5}},
-  lostByMonth:{"Jan":{"Uncontacted":854,"Not interested":284,"B2C-Physical Space":181,"Job Seeker":175,"Should not be opp":80,"Other - Audited":76,"Went to competition":56,"Business no longer needed":55,"Other":47,"Activity restriction":42,"Too expensive":36},"Feb":{"Not interested":55,"B2C-Physical Space":51,"Job Seeker":27,"Other":24,"Should not be opp":23,"Activity restriction":17,"Too expensive":15,"Channel Partner":12,"Went to competition":10}}
-};
 
-// ══════════════════════════════════════════════════════════════
-// APP STATE
-// ══════════════════════════════════════════════════════════════
-let D = JSON.parse(JSON.stringify(DEFAULT));
-let firebaseApp=null, firestore=null;
-const CHARTS={};
-
-// ══════════════════════════════════════════════════════════════
-// FIREBASE
-// ══════════════════════════════════════════════════════════════
-function loadFirebaseSDK(cb){
-  if(window.firebase){cb();return;}
-  const load=(src,next)=>{const s=document.createElement('script');s.src=src;s.onload=next;document.head.appendChild(s);};
-  load('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js',()=>
-    load('https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js',cb));
-}
-function initFirebase(cfg){
-  return new Promise((res,rej)=>{
-    loadFirebaseSDK(()=>{
-      try{
-        if(firebaseApp) firebaseApp.delete().catch(()=>{});
-        firebaseApp=firebase.initializeApp(cfg,'qa-hub-'+(Date.now()));
-        firestore=firebaseApp.firestore();
-        res(true);
-      }catch(e){rej(e);}
-    });
-  });
-}
-async function fbLoad(){
-  if(!firestore)return false;
-  try{
-    const doc=await firestore.collection('dashboard').doc('latest').get();
-    if(doc.exists){D=doc.data();renderAll();updateHeader();return true;}
-  }catch(e){console.warn('Firestore read:',e);}
-  return false;
-}
-async function fbSave(data){
-  if(!firestore)return false;
-  try{await firestore.collection('dashboard').doc('latest').set(data);return true;}
-  catch(e){console.warn('Firestore write:',e);return false;}
+let DATA={
+total:0,
+closed:0,
+source:{},
+agents:{},
+agentClosed:{},
+dates:{},
+stages:{}
 }
 
-// ══════════════════════════════════════════════════════════════
-// FIREBASE MODAL
-// ══════════════════════════════════════════════════════════════
-function openFbModal(){
-  const saved=localStorage.getItem('qa_hub_fb');
-  if(saved){try{document.getElementById('fbConfigInput').value=JSON.stringify(JSON.parse(saved),null,2);}catch(e){}}
-  document.getElementById('fbOverlay').classList.add('open');
-}
-function closeFbModal(){document.getElementById('fbOverlay').classList.remove('open');}
-function clearFbConfig(){
-  localStorage.removeItem('qa_hub_fb');firebaseApp=null;firestore=null;
-  setFbStatus('warn','⚠ Disconnected from Firebase. Using embedded data.');
-  document.getElementById('hDot').className='ld amber';
-  document.getElementById('dbadge').innerHTML='Embedded data<br><span>Not connected to Firebase</span>';
-  document.getElementById('fb-banner').style.display='';
-  document.getElementById('fb-banner-txt').textContent='Firebase disconnected — showing embedded data.';
-}
-async function saveFbConfig(){
-  const raw=document.getElementById('fbConfigInput').value.trim();
-  if(!raw){setFbStatus('err','✕ Please paste your Firebase config JSON.');return;}
-  let cfg;
-  try{cfg=JSON.parse(raw);}catch(e){setFbStatus('err','✕ Invalid JSON — check formatting.');return;}
-  if(!cfg.projectId||!cfg.apiKey){setFbStatus('err','✕ Config missing required fields (apiKey, projectId).');return;}
-  setFbStatus('warn','⏳ Connecting to Firebase...');
-  try{
-    await initFirebase(cfg);
-    localStorage.setItem('qa_hub_fb',raw);
-    setFbStatus('ok','✓ Connected! Loading data from Firestore...');
-    const loaded=await fbLoad();
-    if(!loaded) setFbStatus('ok','✓ Connected! No data in Firestore yet — upload a file to sync.');
-    document.getElementById('hDot').className='ld green';
-    document.getElementById('dbadge').innerHTML='Firebase connected<br><span>'+cfg.projectId+'</span>';
-    document.getElementById('fb-banner').style.display='none';
-    showToast('✓','Firebase connected: '+cfg.projectId);
-    setTimeout(closeFbModal,1500);
-  }catch(e){setFbStatus('err','✕ Connection failed: '+e.message);}
-}
-function setFbStatus(type,msg){
-  const el=document.getElementById('fbStatusMsg');
-  el.className='fbstatus '+type;el.textContent=msg;el.style.display='';
+document.getElementById("upload").addEventListener("change",handleFile)
+
+function handleFile(e){
+
+let file=e.target.files[0]
+
+let reader=new FileReader()
+
+reader.onload=function(evt){
+
+let data=new Uint8Array(evt.target.result)
+
+let workbook=XLSX.read(data,{type:'array'})
+
+let sheet=workbook.Sheets[workbook.SheetNames[0]]
+
+let rows=XLSX.utils.sheet_to_json(sheet)
+
+processData(rows)
+
 }
 
-// ══════════════════════════════════════════════════════════════
-// UPLOAD MODAL
-// ══════════════════════════════════════════════════════════════
-function openUpload(){document.getElementById('upOverlay').classList.add('open');}
-function closeUpload(){document.getElementById('upOverlay').classList.remove('open');document.getElementById('fileInput').value='';}
-function dz(e,on){e.preventDefault();document.getElementById('dzone').classList.toggle('over',on);}
-function onDrop(e){e.preventDefault();dz(e,false);const f=e.dataTransfer.files[0];if(f)onFile(f);}
-async function onFile(file){
-  if(!file)return;
-  const ext=file.name.split('.').pop().toLowerCase();
-  if(!['xlsx','xls','csv'].includes(ext)){setUpSt('✕ Please upload an .xlsx, .xls, or .csv file.');return;}
-  setUpSt('⏳ Reading file...');setProgress(10);
-  try{
-    const buf=await file.arrayBuffer();
-    setProgress(30);setUpSt('⏳ Parsing spreadsheet...');
-    const wb=XLSX.read(buf,{type:'array',cellDates:true,cellNF:true});
-    setProgress(55);setUpSt('⏳ Computing metrics...');
-    const data=processWorkbook(wb);
-    if(!data||data.total===0){setUpSt('✕ No data found. Check that column headers match the original export.');setProgress(0);return;}
-    setProgress(80);setUpSt('⏳ Rendering dashboard...');
-    D=data;renderAll();updateHeader();
-    setProgress(95);
-    // Save to Firebase
-    if(firestore){
-      setUpSt('⏳ Syncing to Firebase...');
-      const saved=await fbSave(data);
-      setProgress(100);
-      if(saved){setUpSt('✓ Synced to Firebase! All users will see updated data.');showToast('✓','Data synced: '+fmt(data.total)+' records');}
-      else{setUpSt('✓ Dashboard updated (Firebase write failed — check permissions).');showToast('✓','Dashboard updated: '+fmt(data.total)+' records');}
-    }else{
-      setProgress(100);setUpSt('✓ Dashboard updated with '+fmt(data.total)+' records. Configure Firebase to persist data.');
-      showToast('✓','Dashboard updated: '+fmt(data.total)+' records');
-    }
-    document.getElementById('dztxt').textContent='✓ '+file.name;
-    setTimeout(closeUpload,2500);
-  }catch(e){console.error(e);setUpSt('✕ Error processing file: '+e.message);setProgress(0);}
-}
-function setUpSt(msg){document.getElementById('upst').textContent=msg;}
-function setProgress(v){const pw=document.getElementById('progressWrap');const pb=document.getElementById('pbar');if(v>0){pw.style.display='block';pb.style.width=v+'%';}else{pw.style.display='none';}}
+reader.readAsArrayBuffer(file)
 
-// ══════════════════════════════════════════════════════════════
-// DATA PROCESSOR
-// ══════════════════════════════════════════════════════════════
-function normalizeSource(s){
-  if(!s)return'Others';s=s.trim();
-  if(['Facebook','Facebook Ads','Meta Ads','Meta'].includes(s))return'Facebook/Meta';
-  if(['Linkedin Ads','Linkedin'].includes(s))return'LinkedIn';
-  return s;
-}
-function deriveStatus(stage){
-  const ops=['Developing','Offshore Developing','Future Sale','Prospecting','Lead - CP Review','Closing','Closed Sale','Unresponsive Client','Lead - B2C Review','Lead - Future'];
-  return ops.includes(stage)?'Ops':'Lead';
-}
-function inc(obj,k){if(k)obj[k]=(obj[k]||0)+1;}
-function getWeekLabel(d){
-  const dt=new Date(d),jan1=new Date(dt.getFullYear(),0,1);
-  const wn=Math.ceil(((dt-jan1)/86400000+jan1.getDay()+1)/7);
-  return'W'+wn+'-'+dt.getFullYear();
-}
-function processWorkbook(wb){
-  const ws=wb.Sheets[wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(ws,{cellDates:true,defval:'',raw:false});
-  if(!rows.length)return null;
-  const d={total:0,days:0,dateRange:'',byStage:{},bySource:{},byMethod:{},byLostReason:{},byCountry:{},byStatus:{},byShift:{},byAgent:{},agentStatus:{},closedByAgent:{},byDate:{},running:{},weeklyStatus:{},stageByMonth:{},sourceByMonth:{},lostByMonth:{}};
-  rows.forEach(row=>{
-    const stage=String(row['Stage']||'').trim();
-    if(!stage||stage==='Stage'||stage.startsWith('='))return;
-    const src=normalizeSource(String(row['Lead Source']||''));
-    const method=String(row['Method of Contact']||'').trim();
-    const lost=String(row['Lost Reason']||'').trim();
-    const country=String(row['Country']||'').trim();
-    let status=String(row['Status']||'').trim();
-    if(!status||status.startsWith('='))status=deriveStatus(stage);
-    const shift=String(row['Shift']||'').trim();
-    const agent=String(row['Agents Name']||'').trim();
-    const month=String(row['Month']||'').trim();
-    // Date
-    let dateStr='';
-    const lt=row['Lead Created Time'];
-    if(lt instanceof Date&&!isNaN(lt))dateStr=lt.toISOString().split('T')[0];
-    else if(typeof lt==='string'&&/^\d{4}-\d{2}-\d{2}/.test(lt))dateStr=lt.slice(0,10);
-    // Count
-    d.total++;
-    inc(d.byStage,stage);
-    inc(d.bySource,src);
-    if(method&&!method.startsWith('='))inc(d.byMethod,method);
-    if(lost&&lost!=='-'&&!lost.startsWith('='))inc(d.byLostReason,lost);
-    if(country&&!country.startsWith('='))inc(d.byCountry,country);
-    if(status==='Lead'||status==='Ops')inc(d.byStatus,status);
-    if(shift&&!shift.startsWith('='))inc(d.byShift,shift);
-    if(agent&&agent!=='-'&&!agent.startsWith('=')){
-      inc(d.byAgent,agent);
-      if(!d.agentStatus[agent])d.agentStatus[agent]={Ops:0,Lead:0};
-      if(status==='Lead'||status==='Ops')d.agentStatus[agent][status]++;
-      if(stage==='Closed Sale')inc(d.closedByAgent,agent);
-    }
-    if(dateStr){
-      inc(d.byDate,dateStr);
-      const wk=getWeekLabel(dateStr);
-      if(!d.weeklyStatus[wk])d.weeklyStatus[wk]={Lead:0,Ops:0};
-      if(status==='Lead'||status==='Ops')d.weeklyStatus[wk][status]++;
-    }
-    if(month&&!month.startsWith('=')){
-      if(!d.stageByMonth[month])d.stageByMonth[month]={};
-      inc(d.stageByMonth[month],stage);
-      if(!d.sourceByMonth[src])d.sourceByMonth[src]={};
-      inc(d.sourceByMonth[src],month);
-      if(lost&&lost!=='-'&&!lost.startsWith('=')){
-        if(!d.lostByMonth[month])d.lostByMonth[month]={};
-        inc(d.lostByMonth[month],lost);
-      }
-    }
-  });
-  // Running total
-  const sorted=Object.keys(d.byDate).sort();
-  let cum=0;sorted.forEach(k=>{cum+=d.byDate[k];d.running[k]=cum;});
-  d.days=sorted.length;
-  if(sorted.length){
-    const fmt2=s=>{const[,m,dy]=s.split('-');const mn=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${mn[+m]} ${+dy}`;};
-    d.dateRange=fmt2(sorted[0])+' – '+fmt2(sorted[sorted.length-1])+', '+sorted[0].split('-')[0];
-  }
-  return d;
 }
 
-// ══════════════════════════════════════════════════════════════
-// CHART HELPERS
-// ══════════════════════════════════════════════════════════════
-const GLD='#f59e0b',TEL='#10b981',ROS='#f43f5e',VIO='#8b5cf6',SKY='#38bdf8',LIM='#84cc16',ORN='#fb923c',PNK='#f472b6';
-const PAL=[GLD,TEL,VIO,ROS,SKY,LIM,ORN,PNK,'#34d399','#a78bfa','#60a5fa','#fbbf24','#fb7185','#4ade80','#818cf8'];
-const STAGE_COL={'Lead - Disqualified':ROS,'Future Sale':GLD,'Developing':TEL,'Lost Opportunity':ROS,'Lead - Duplicate':VIO,'Offshore Developing':SKY,'Lead - Uncontacted':'#475569','Lead - CP Review':'#475569','Prospecting':LIM,'Closed Sale':'#22c55e','Lead - B2C Review':'#475569','Lead - Future':VIO,'Lead - New':SKY,'Unresponsive Client':ORN,'Closing':'#22c55e'};
-const TT={backgroundColor:'#0c0f16',borderColor:'#263050',borderWidth:1,titleColor:GLD,bodyColor:'#dde4f0',padding:10,cornerRadius:6,titleFont:{family:"'Outfit',sans-serif",size:11,weight:'600'},bodyFont:{family:"'JetBrains Mono',monospace",size:10}};
-Chart.defaults.color='#566070';Chart.defaults.borderColor='#1a2235';Chart.defaults.font.family="'JetBrains Mono',monospace";Chart.defaults.font.size=10;
+function processData(rows){
 
-function mkChart(id,cfg){const el=document.getElementById(id);if(!el)return null;if(CHARTS[id])CHARTS[id].destroy();CHARTS[id]=new Chart(el.getContext('2d'),cfg);return CHARTS[id];}
-function grd(ctx,c,h){const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,c+'55');g.addColorStop(1,c+'00');return g;}
-function topN(o,n){return Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);}
-const fmt=n=>n==null?'—':Number(n).toLocaleString();
-const pct=(n,t)=>t>0?((n/t)*100).toFixed(1)+'%':'0%';
+DATA.total=rows.length
 
-// ══════════════════════════════════════════════════════════════
-// UPDATE HEADER
-// ══════════════════════════════════════════════════════════════
-function updateHeader(){
-  const d=D;
-  setEl('hRecords',fmt(d.total)+' records');
-  setEl('hRange',d.dateRange||'');
-  setEl('hAgents',Object.keys(d.byAgent||{}).length+' agents');
-}
-function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+rows.forEach(r=>{
 
-// ══════════════════════════════════════════════════════════════
-// RENDER ALL TABS
-// ══════════════════════════════════════════════════════════════
-function renderAll(){renderOV();renderPL();renderAG();renderCH();renderGE();renderOP();renderTR();}
+let src=r["Lead Source"]||"Unknown"
+let agent=r["Agents Name"]||"Unknown"
+let stage=r["Stage"]||"Unknown"
+let date=r["Lead Created Time"]
 
-// ── OVERVIEW ──────────────────────────────────────────────────
-function renderOV(){
-  const d=D, tot=d.total||0;
-  const cls=d.byStage['Closed Sale']||0, lo=d.byStage['Lost Opportunity']||0;
-  const dq=d.byStage['Lead - Disqualified']||0, ops=d.byStatus['Ops']||0, ld=d.byStatus['Lead']||0;
-  const nAg=Object.keys(d.byAgent||{}).length, days=d.days||1;
-  const agTot=Object.values(d.byAgent||{}).reduce((a,b)=>a+b,0);
-  setEl('k-tot',fmt(tot));setEl('k-cls',fmt(cls));setEl('k-cr',pct(cls,tot)+' close rate');
-  setEl('k-ops',fmt(ops));setEl('k-ld',fmt(ld));setEl('k-lo',fmt(lo));setEl('k-lop',pct(lo,tot)+' of total');
-  setEl('k-dq',fmt(dq));setEl('k-dqp',pct(dq,tot)+' of total');
-  setEl('k-ad',(tot/days).toFixed(1));setEl('k-days',days+' active days');
-  setEl('k-nag',nAg);setEl('k-agavg','Avg '+(agTot/Math.max(nAg,1)).toFixed(1)+'/agent');
-  // Daily chart
-  const dates=Object.keys(d.byDate||{}).sort(), dvals=dates.map(k=>d.byDate[k]);
-  const dlbls=dates.map(x=>{const[,m,dy]=x.split('-');return`${+dy} ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m]}`});
-  const ctxD=document.getElementById('c-ov-daily');
-  if(ctxD){const ctx2=ctxD.getContext('2d');mkChart('c-ov-daily',{type:'line',data:{labels:dlbls,datasets:[{data:dvals,borderColor:GLD,backgroundColor:grd(ctx2,GLD,230),borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:.4,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:14,maxRotation:0}},y:{grid:{color:'#1a2235'},border:{display:false}}}}});}
-  // Status donut
-  mkChart('c-ov-status',{type:'doughnut',data:{labels:['Ops (Active)','Lead (Qualifying)'],datasets:[{data:[ops,ld],backgroundColor:[TEL,VIO],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:12,font:{size:10}}},tooltip:{...TT,titleColor:TEL,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
-  // Source donut
-  const s8=topN(d.bySource||{},8);
-  mkChart('c-ov-src',{type:'doughnut',data:{labels:s8.map(e=>e[0]),datasets:[{data:s8.map(e=>e[1]),backgroundColor:PAL,borderWidth:0,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{boxWidth:7,padding:8,font:{size:9}}},tooltip:{...TT,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
-  // Top agents bar
-  const a8=topN(d.byAgent||{},8);
-  mkChart('c-ov-ag',{type:'bar',indexAxis:'y',data:{labels:a8.map(e=>e[0].split(' ').slice(0,2).join(' ')),datasets:[{data:a8.map(e=>e[1]),backgroundColor:a8.map((_,i)=>i===0?GLD:GLD+'66'),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
-  // Insights
-  const topAgent=Object.keys(d.byAgent||{})[0]||'—', topAgCnt=Object.values(d.byAgent||{})[0]||0;
-  const topSrc=topN(d.bySource||{},1)[0]||['—',0];
-  const unc=d.byLostReason?.['Uncontacted']||0;
-  const ins=[
-    {ic:'⚠',c:ROS,t:`<strong>${fmt(unc)} leads</strong> were never contacted — the single biggest loss driver at ${pct(unc,tot)}.`},
-    {ic:'📈',c:SKY,t:`Daily average is <strong>${(tot/days).toFixed(1)} inquiries/day</strong>. Feb pacing (+4%) ahead of January.`},
-    {ic:'🏆',c:GLD,t:`<strong>${topAgent}</strong> leads all agents with ${fmt(topAgCnt)} inquiries handled this period.`},
-    {ic:'📱',c:VIO,t:`<strong>${topSrc[0]}</strong> drives ${pct(topSrc[1],tot)} of all leads — monitor channel concentration risk.`},
-    {ic:'🎯',c:TEL,t:`<strong>${pct(cls,tot)} close rate</strong> across ${fmt(tot)} inquiries. ${fmt(cls)} deals won.`},
-    {ic:'⚡',c:LIM,t:`Disqualified/Lost accounts for <strong>${pct(dq+lo,tot)}</strong> — strong opportunity for qualification improvement.`},
-  ];
-  document.getElementById('insights').innerHTML=ins.map(i=>`<div class="ins" style="--ic:${i.c}"><div class="iico">${i.ic}</div><div class="itxt">${i.t}</div></div>`).join('');
+DATA.source[src]=(DATA.source[src]||0)+1
+DATA.agents[agent]=(DATA.agents[agent]||0)+1
+DATA.stages[stage]=(DATA.stages[stage]||0)+1
+
+if(stage==="Closed Sale"){
+
+DATA.closed++
+
+DATA.agentClosed[agent]=(DATA.agentClosed[agent]||0)+1
+
 }
 
-// ── PIPELINE ──────────────────────────────────────────────────
-function renderPL(){
-  const d=D, tot=d.total||1;
-  const cls=d.byStage['Closed Sale']||0, lo=d.byStage['Lost Opportunity']||0, dq=d.byStage['Lead - Disqualified']||0;
-  const ops=d.byStatus['Ops']||0, dev=(d.byStage['Developing']||0)+(d.byStage['Offshore Developing']||0);
-  const fut=(d.byStage['Future Sale']||0)+(d.byStage['Lead - Future']||0);
-  const pro=d.byStage['Prospecting']||0, unc=d.byStage['Lead - Uncontacted']||0;
-  setEl('pp-tot',fmt(tot));setEl('pp-cr',pct(cls,tot));setEl('pp-or',pct(ops,tot));setEl('pp-nr',pct(dq+lo,tot));setEl('pp-unc',fmt(unc));
-  // Funnel
-  const fsteps=[
-    {lbl:'Total Inquiries',n:tot,c:GLD},{lbl:'Active Ops',n:ops,c:TEL},
-    {lbl:'Developing',n:dev,c:SKY},{lbl:'Future / Nurture',n:fut,c:VIO},
-    {lbl:'Prospecting',n:pro,c:ORN},{lbl:'Closed Sale ✓',n:cls,c:LIM}
-  ];
-  document.getElementById('funnel').innerHTML=fsteps.map((s,i)=>`<div class="frow">
-    <div class="flbl">${s.lbl}</div>
-    <div class="fbw" style="padding-left:${i*6}px"><div class="fbar" style="width:${Math.max((s.n/tot*100),2).toFixed(1)}%;background:${s.c}">${(s.n/tot*100).toFixed(1)}%</div></div>
-    <div class="fn">${fmt(s.n)}</div></div>`).join('');
-  // Stage bars
-  const mx=Math.max(...Object.values(d.byStage||{}),1);
-  document.getElementById('stageBars').innerHTML=Object.entries(d.byStage||{}).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="sbrow"><span class="sbname">${n}</span><div class="sbtrack"><div class="sbfill" style="width:${(v/mx*100).toFixed(0)}%;background:${STAGE_COL[n]||'#475569'}"></div></div><span class="sbcnt">${fmt(v)}</span></div>`).join('');
-  // Stage Jan vs Feb
-  const sm=d.stageByMonth||{}, ts=Object.keys(d.byStage||{}).sort((a,b)=>d.byStage[b]-d.byStage[a]).slice(0,8);
-  mkChart('c-pl-month',{type:'bar',data:{labels:ts.map(s=>s.replace('Lead - ','').substring(0,16)),datasets:[{label:'January',data:ts.map(s=>(sm['Jan']||{})[s]||0),backgroundColor:GLD+'cc',borderRadius:3},{label:'February',data:ts.map(s=>(sm['Feb']||{})[s]||0),backgroundColor:SKY+'cc',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8}},tooltip:{...TT}},scales:{x:{grid:{display:false},ticks:{maxRotation:28,font:{size:9}}},y:{grid:{color:'#1a2235'},border:{display:false}}}}});
-  // Outcome donut
-  const outObj={'Closed Sale':cls,'Developing':dev,'Future Sale':d.byStage['Future Sale']||0,'Prospecting':pro,'Lost Opp':lo,'Disqualified':dq+(d.byStage['Lead - Duplicate']||0),'Uncontacted':unc,'Other':(d.byStage['Lead - CP Review']||0)+(d.byStage['Lead - B2C Review']||0)+(d.byStage['Lead - New']||0)+(d.byStage['Unresponsive Client']||0)+(d.byStage['Closing']||0)};
-  mkChart('c-pl-out',{type:'doughnut',data:{labels:Object.keys(outObj),datasets:[{data:Object.values(outObj),backgroundColor:[LIM,TEL,GLD,ORN,ROS,'#ef4444','#475569','#334155'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{boxWidth:7,padding:8,font:{size:9}}},tooltip:{...TT,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
+if(date){
+
+let d=date.split(" ")[0]
+
+DATA.dates[d]=(DATA.dates[d]||0)+1
+
 }
 
-// ── AGENTS ────────────────────────────────────────────────────
-function renderAG(){
-  const d=D, tot=d.total||1;
-  const allAgents=Object.entries(d.byAgent||{}).sort((a,b)=>b[1]-a[1]);
-  const closedE=Object.entries(d.closedByAgent||{}).sort((a,b)=>b[1]-a[1]);
-  setEl('ag-top',allAgents[0]?allAgents[0][0].split(' ').slice(0,2).join(' '):'—');
-  setEl('ag-topn',allAgents[0]?allAgents[0][1]:'0');
-  setEl('ag-avg',allAgents.length?(allAgents.reduce((s,[,v])=>s+v,0)/allAgents.length).toFixed(1):'0');
-  setEl('ag-closer',closedE[0]?closedE[0][0].split(' ')[0]:'—');
-  setEl('ag-closern',closedE[0]?closedE[0][1]:'0');
-  // Top 15 bar
-  const t15=allAgents.slice(0,15);
-  mkChart('c-ag-top',{type:'bar',indexAxis:'y',data:{labels:t15.map(e=>e[0].split(' ').slice(0,2).join(' ')),datasets:[{data:t15.map(e=>e[1]),backgroundColor:t15.map((_,i)=>i===0?GLD:i===1?'#94a3b8':i===2?'#b87333':SKY+'88'),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
-  // Lead vs Ops stacked
-  const t20=allAgents.slice(0,20), as2=d.agentStatus||{};
-  mkChart('c-ag-split',{type:'bar',indexAxis:'y',data:{labels:t20.map(([n])=>n.split(' ').slice(0,2).join(' ')),datasets:[{label:'Ops',data:t20.map(([n])=>(as2[n]||{}).Ops||0),backgroundColor:TEL+'cc',borderRadius:0},{label:'Lead',data:t20.map(([n])=>(as2[n]||{}).Lead||0),backgroundColor:VIO+'cc',borderRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8}},tooltip:{...TT}},scales:{x:{stacked:true,grid:{color:'#1a2235'},border:{display:false}},y:{stacked:true,grid:{display:false},ticks:{font:{size:9}}}}}});
-  // Table
-  document.getElementById('ag-tbody').innerHTML=allAgents.map(([n,cnt],i)=>{
-    const st=as2[n]||{};const o=st.Ops||0;const lv=st.Lead||0;
-    const op=cnt>0?Math.round(o/cnt*100):0;
-    const rk=i===0?'r1':i===1?'r2c':i===2?'r3c':'rk';
-    return`<tr><td class="rk ${rk}">${i+1}</td><td>${n.split(' ').slice(0,3).join(' ')}</td><td>${fmt(cnt)}</td><td><span class="pill pt">${fmt(o)}</span></td><td><span class="pill pl">${fmt(lv)}</span></td><td>${op}%</td><td><div class="mbar"><div class="mfill" style="width:${allAgents[0][1]>0?(cnt/allAgents[0][1]*100).toFixed(0):0}%"></div></div></td></tr>`;
-  }).join('');
-  // Closed bar
-  const ca10=closedE.slice(0,10);
-  mkChart('c-ag-cls',{type:'bar',data:{labels:ca10.map(e=>e[0].split(' ')[0]),datasets:[{data:ca10.map(e=>e[1]),backgroundColor:ca10.map((_,i)=>i===0?LIM:LIM+'77'),borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,titleColor:LIM}},scales:{x:{grid:{display:false}},y:{grid:{color:'#1a2235'},border:{display:false},ticks:{stepSize:1}}}}});
+})
+
+render()
+
 }
 
-// ── CHANNELS ──────────────────────────────────────────────────
-function renderCH(){
-  const d=D, tot=d.total||1;
-  const srcs=Object.entries(d.bySource||{}).sort((a,b)=>b[1]-a[1]);
-  setEl('ch-g',fmt(d.bySource?.['Google Ads']||0));setEl('ch-w',fmt(d.bySource?.['Website']||0));
-  // Source donut
-  mkChart('c-ch-src',{type:'doughnut',data:{labels:srcs.map(e=>e[0]),datasets:[{data:srcs.map(e=>e[1]),backgroundColor:PAL,borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{boxWidth:7,padding:8,font:{size:9}}},tooltip:{...TT,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
-  // Source Jan vs Feb
-  const sm=d.sourceByMonth||{}, sk=Object.keys(sm).filter(k=>((sm[k].Jan||0)+(sm[k].Feb||0))>0).slice(0,8);
-  mkChart('c-ch-jf',{type:'bar',data:{labels:sk,datasets:[{label:'January',data:sk.map(k=>sm[k].Jan||0),backgroundColor:GLD+'cc',borderRadius:3},{label:'February',data:sk.map(k=>sm[k].Feb||0),backgroundColor:SKY+'cc',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8}},tooltip:{...TT}},scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#1a2235'},border:{display:false}}}}});
-  // Method donut
-  const me=Object.entries(d.byMethod||{}).sort((a,b)=>b[1]-a[1]);
-  mkChart('c-ch-mth',{type:'doughnut',data:{labels:me.map(e=>e[0]),datasets:[{data:me.map(e=>e[1]),backgroundColor:PAL,borderWidth:0,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{boxWidth:7,padding:8,font:{size:9}}},tooltip:{...TT,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
-  // All sources bar
-  mkChart('c-ch-bar',{type:'bar',indexAxis:'y',data:{labels:srcs.map(e=>e[0]),datasets:[{data:srcs.map(e=>e[1]),backgroundColor:PAL,borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
+function render(){
+
+document.getElementById("total").innerText=DATA.total
+document.getElementById("closed").innerText=DATA.closed
+
+let rate=(DATA.closed/DATA.total*100).toFixed(2)
+
+document.getElementById("rate").innerText=rate+"%"
+
+document.getElementById("agents").innerText=Object.keys(DATA.agents).length
+
+renderDaily()
+renderSource()
+renderFunnel()
+renderAgents()
+renderAI()
+
 }
 
-// ── GEOGRAPHY ──────────────────────────────────────────────────
-function renderGE(){
-  const d=D, tot=d.total||1;
-  const ct=Object.entries(d.byCountry||{}).sort((a,b)=>b[1]-a[1]);
-  // Top 15 bar
-  mkChart('c-ge-top',{type:'bar',indexAxis:'y',data:{labels:ct.slice(0,15).map(e=>e[0]),datasets:[{data:ct.slice(0,15).map(e=>e[1]),backgroundColor:SKY+'bb',borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,titleColor:SKY,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false}}}}});
-  // Split donut
-  const uae=d.byCountry?.['UAE']||0, ind=d.byCountry?.['India']||0, pak=d.byCountry?.['Pakistan']||0;
-  mkChart('c-ge-spl',{type:'doughnut',data:{labels:['UAE','India','Pakistan','Rest of World'],datasets:[{data:[uae,ind,pak,tot-uae-ind-pak],backgroundColor:[GLD,TEL,VIO,'#334155'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{boxWidth:8,padding:10}},tooltip:{...TT,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
-  // Table
-  document.getElementById('ge-tbody').innerHTML=ct.map(([cn,v],i)=>`<tr><td class="rk">${i+1}</td><td>${cn}</td><td>${fmt(v)}</td><td>${pct(v,tot)}</td><td><div class="mbar"><div class="mfill" style="width:${ct[0][1]>0?(v/ct[0][1]*100).toFixed(0):0}%"></div></div></td></tr>`).join('');
+function renderDaily(){
+
+new Chart(document.getElementById("daily"),{
+
+type:"line",
+
+data:{
+labels:Object.keys(DATA.dates),
+datasets:[{
+data:Object.values(DATA.dates),
+borderColor:"#f59e0b"
+}]
 }
 
-// ── OPERATIONS ────────────────────────────────────────────────
-function renderOP(){
-  const d=D, tot=d.total||1;
-  const sh=Object.entries(d.byShift||{}).sort((a,b)=>b[1]-a[1]);
-  // Shift donut
-  mkChart('c-op-sh',{type:'doughnut',data:{labels:sh.map(e=>e[0]),datasets:[{data:sh.map(e=>e[1]),backgroundColor:[LIM,GLD,SKY,VIO,ORN],borderWidth:0,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{boxWidth:7,padding:8,font:{size:9}}},tooltip:{...TT,titleColor:LIM,callbacks:{label:c=>` ${fmt(c.parsed)} (${pct(c.parsed,tot)})`}}}}});
-  // Lost reasons
-  const lbm=d.lostByMonth||{};
-  const lj=Object.entries(lbm['Jan']||{}).sort((a,b)=>b[1]-a[1]).slice(0,9);
-  const lf=Object.entries(lbm['Feb']||{}).sort((a,b)=>b[1]-a[1]).slice(0,9);
-  if(lj.length)mkChart('c-op-lj',{type:'bar',indexAxis:'y',data:{labels:lj.map(e=>e[0].substring(0,28)),datasets:[{data:lj.map(e=>e[1]),backgroundColor:ROS+'bb',borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,titleColor:ROS}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
-  if(lf.length)mkChart('c-op-lf',{type:'bar',indexAxis:'y',data:{labels:lf.map(e=>e[0].substring(0,28)),datasets:[{data:lf.map(e=>e[1]),backgroundColor:ORN+'bb',borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,titleColor:ORN}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
-  // All combined
-  const la=Object.entries(d.byLostReason||{}).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  if(la.length)mkChart('c-op-la',{type:'bar',indexAxis:'y',data:{labels:la.map(e=>e[0].substring(0,32)),datasets:[{data:la.map(e=>e[1]),backgroundColor:ROS+'88',borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,titleColor:ROS}},scales:{x:{grid:{color:'#1a2235'},border:{display:false}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
-  // Table
-  const allLost=[...new Set([...Object.keys(lbm['Jan']||{}),...Object.keys(lbm['Feb']||{})])];
-  const ltRows=allLost.map(r=>({r,j:(lbm['Jan']||{})[r]||0,f:(lbm['Feb']||{})[r]||0})).sort((a,b)=>(b.j+b.f)-(a.j+a.f));
-  const grandT=ltRows.reduce((s,x)=>s+x.j+x.f,0);
-  document.getElementById('lr-tbody').innerHTML=ltRows.map(({r,j,f})=>`<tr><td>${r.substring(0,35)}</td><td>${fmt(j)}</td><td>${fmt(f)}</td><td><strong>${fmt(j+f)}</strong></td><td>${pct(j+f,grandT)}</td></tr>`).join('');
+})
+
 }
 
-// ── TRENDS ────────────────────────────────────────────────────
-function renderTR(){
-  const d=D;
-  const dates=Object.keys(d.byDate||{}).sort();
-  const dlbls=dates.map(x=>{const[,m,dy]=x.split('-');return`${+dy} ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m]}`});
-  const dvals=dates.map(k=>d.byDate[k]);
-  // Full daily line
-  const ctxFD=document.getElementById('c-tr-day');
-  if(ctxFD){const ctx2=ctxFD.getContext('2d');mkChart('c-tr-day',{type:'line',data:{labels:dlbls,datasets:[{data:dvals,borderColor:GLD,backgroundColor:grd(ctx2,GLD,270),borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.4,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{title:t=>dlbls[t[0].dataIndex],label:c=>` ${fmt(c.parsed)} inquiries`}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:14,maxRotation:0}},y:{grid:{color:'#1a2235'},border:{display:false}}}}});}
-  // Weekly Lead vs Ops
-  const wks=Object.entries(d.weeklyStatus||{}).sort((a,b)=>a[0].localeCompare(b[0]));
-  mkChart('c-tr-wk',{type:'bar',data:{labels:wks.map(([k])=>k),datasets:[{label:'Ops',data:wks.map(([,v])=>v.Ops||0),backgroundColor:TEL+'cc',borderRadius:4},{label:'Lead',data:wks.map(([,v])=>v.Lead||0),backgroundColor:VIO+'cc',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8}},tooltip:{...TT}},scales:{x:{grid:{display:false}},y:{grid:{color:'#1a2235'},border:{display:false},stacked:false}}}});
-  // Cumulative
-  const rdates=Object.keys(d.running||{}).sort(), rvals=rdates.map(k=>d.running[k]);
-  const rlbls=rdates.map(x=>{const[,m,dy]=x.split('-');return`${+dy} ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m]}`});
-  const ctxR=document.getElementById('c-tr-run');
-  if(ctxR){const ctx2=ctxR.getContext('2d');mkChart('c-tr-run',{type:'line',data:{labels:rlbls,datasets:[{data:rvals,borderColor:TEL,backgroundColor:grd(ctx2,TEL,270),borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,titleColor:TEL,callbacks:{label:c=>` Total: ${fmt(c.parsed)}`}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:12,maxRotation:0}},y:{grid:{color:'#1a2235'},border:{display:false}}}}});}
-  // Jan vs Feb overlay
-  const janDates=dates.filter(d=>d.startsWith('2026-01')), febDates=dates.filter(d=>d.startsWith('2026-02'));
-  const dayNums=Array.from({length:Math.max(janDates.length,febDates.length)},(_,i)=>`Day ${i+1}`);
-  mkChart('c-tr-ov',{type:'line',data:{labels:dayNums,datasets:[
-    {label:'January',data:janDates.map(k=>d.byDate[k]),borderColor:GLD,backgroundColor:'transparent',borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:.4},
-    {label:'February',data:febDates.map(k=>d.byDate[k]),borderColor:SKY,backgroundColor:'transparent',borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:.4,borderDash:[5,3]}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8}},tooltip:{...TT}},scales:{x:{grid:{display:false},ticks:{maxRotation:0}},y:{grid:{color:'#1a2235'},border:{display:false}}}}});
+function renderSource(){
+
+new Chart(document.getElementById("source"),{
+
+type:"doughnut",
+
+data:{
+labels:Object.keys(DATA.source),
+datasets:[{
+data:Object.values(DATA.source)
+}]
 }
 
-// ══════════════════════════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════════════════════════
-document.querySelectorAll('.tab').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
-    btn.classList.add('on');
-    document.getElementById('p-'+btn.dataset.tab).classList.add('on');
-  });
-});
+})
 
-// ══════════════════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════════════════
-function showToast(ico,msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.style.borderColor=type==='err'?'var(--rose)':'var(--teal)';
-  document.getElementById('toastIco').textContent=ico;
-  document.getElementById('toastMsg').textContent=msg;
-  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-// ══════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════
-(async()=>{
-  // Try to restore Firebase config
-  const savedCfg=localStorage.getItem('qa_hub_fb');
-  if(savedCfg){
-    try{
-      const cfg=JSON.parse(savedCfg);
-      await initFirebase(cfg);
-      document.getElementById('hDot').className='ld amber';
-      const loaded=await fbLoad();
-      if(loaded){
-        document.getElementById('hDot').className='ld green';
-        document.getElementById('dbadge').innerHTML='Firebase connected<br><span>'+cfg.projectId+'</span>';
-        updateHeader();
-      }else{
-        document.getElementById('dbadge').innerHTML='Firebase connected<br><span>No cloud data yet</span>';
-      }
-    }catch(e){
-      console.warn('Firebase restore failed:',e);
-      document.getElementById('fb-banner').style.display='';
-    }
-  }else{
-    document.getElementById('fb-banner').style.display='';
-  }
-  renderAll();
-})();
+function renderFunnel(){
+
+new Chart(document.getElementById("funnel"),{
+
+type:"bar",
+
+data:{
+labels:Object.keys(DATA.stages),
+datasets:[{
+data:Object.values(DATA.stages),
+backgroundColor:"#38bdf8"
+}]
+}
+
+})
+
+}
+
+function renderAgents(){
+
+let agents=Object.entries(DATA.agents).sort((a,b)=>b[1]-a[1]).slice(0,10)
+
+let html=""
+
+agents.forEach(a=>{
+
+let closed=DATA.agentClosed[a[0]]||0
+
+let rate=(closed/a[1]*100).toFixed(1)
+
+html+=`
+<tr>
+<td>${a[0]}</td>
+<td>${a[1]}</td>
+<td>${closed}</td>
+<td>${rate}%</td>
+</tr>
+`
+
+})
+
+document.getElementById("agentTable").innerHTML=html
+
+}
+
+function renderAI(){
+
+let ins=[]
+
+if(DATA.closed/DATA.total <0.05)
+ins.push("⚠ Conversion rate below 5%")
+
+let topSource=Object.entries(DATA.source).sort((a,b)=>b[1]-a[1])[0]
+
+if(topSource)
+ins.push("📈 "+topSource[0]+" generates most leads")
+
+let topAgent=Object.entries(DATA.agentClosed).sort((a,b)=>b[1]-a[1])[0]
+
+if(topAgent)
+ins.push("🏆 "+topAgent[0]+" is top closer")
+
+let html=""
+
+ins.forEach(i=>{
+
+html+=`<div class="ai">${i}</div>`
+
+})
+
+document.getElementById("insights").innerHTML=html
+
+}
+
 </script>
+
 </body>
 </html>
